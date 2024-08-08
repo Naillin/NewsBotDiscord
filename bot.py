@@ -4,7 +4,7 @@ import schedule
 import time
 from discord.ext import tasks
 
-# meta infa переместить в файл константmyenv\Scripts\activate
+# meta infa переместить в файл констант
 DISCORD_TOKEN = 'YOUR_DISCORD_BOT_TOKEN'
 NEWS_API_KEY = 'YOUR_NEWS_API_KEY'
 WEATHER_API_KEY = 'YOUR_WEATHER_API_KEY'
