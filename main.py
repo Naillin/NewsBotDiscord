@@ -41,11 +41,6 @@ async def post_updates():
         await channel.send(f'Новости: {news_module.get_NewsUnit().title}')
         #await channel.send(f'Погода: {weather}')
 
-
-# Запуск бота NEWS
-init_config()
-bot.run(DISCORD_TOKEN)
-
 #==========================TASKS_NEWS===========================
 
 # Задача на отправку новостей (раз в час)
@@ -66,3 +61,6 @@ async def on_ready():
 async def hello(ctx):
     await ctx.send(f'Hello {ctx.author.mention}!')
 
+# Запуск бота
+init_config()
+bot.run(DISCORD_TOKEN)
