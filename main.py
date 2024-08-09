@@ -1,10 +1,12 @@
-import discord
-import requests
-import schedule
-import time
-from discord.ext import tasks
+import random
+import weather_module
+import news_module
 
-client = discord.Client()
+import discord
+from discord.ext import tasks, commands
+
+intents = discord.Intents.default()
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 # Начальная настройка бота и запуск конфига
 def init_config():
@@ -25,33 +27,26 @@ def init_config():
     WEATHER_API_KEY = config['WEATHER_API_KEY']
     WEATHER_CITY = config['WEATHER_CITY']
 
-# Получение новостей
-def fetch_news():
-    url = f'https://newsapi.org/v2/top-headlines?country=us&apiKey={NEWS_API_KEY}'
-    response = requests.get(url)
-    data = response.json()
-    articles = data.get('articles', [])
-    if articles:
-        return articles[0]['title']  # Возвращаем заголовок первой статьи
-    return 'Нет доступных новостей.'
-
-# Получение погоды
-def fetch_weather():
-    url = f'https://api.openweathermap.org/data/2.5/weather?q={WEATHER_CITY}&appid={WEATHER_API_KEY}&units=metric'
-    response = requests.get(url)
-    data = response.json()
-    weather_description = data['weather'][0]['description']
-    temperature = data['main']['temp']
-    return f'Погода в {WEATHER_CITY}: {weather_description}, {temperature}°C'
-
 # Отправка новостей
 async def post_updates():
-    channel = client.get_channel(CHANNEL_ID)
+    channel = bot.get_channel(CHANNEL_ID)
     if channel:
-        news = fetch_news()
-        weather = fetch_weather()
-        await channel.send(f'Новости: {news}')
-        await channel.send(f'Погода: {weather}')
+        news_module.fetch_technology_newsAPI(NEWS_API_KEY)
+        # if random.random() < 0.5:
+        #     news_module.fetch_war_newsAPI(NEWS_API_KEY)
+        # else:
+        #     news_module.fetch_gaming_newsAPI(NEWS_API_KEY)
+
+        #weather = weather_module.fetch_weather(WEATHER_API_KEY, WEATHER_CITY)
+        await channel.send(f'Новости: {news_module.get_NewsUnit().title}')
+        #await channel.send(f'Погода: {weather}')
+
+
+# Запуск бота NEWS
+init_config()
+bot.run(DISCORD_TOKEN)
+
+#==========================TASKS_NEWS===========================
 
 # Задача на отправку новостей (раз в час)
 @tasks.loop(hours=1)
@@ -59,11 +54,15 @@ async def scheduled_task():
     await post_updates()
 
 # Заявление о том что бот в системе
-@client.event
+@bot.event
 async def on_ready():
-    print(f'Logged in as {client.user}')
+    print(f'Logged in as {bot.user}')
     scheduled_task.start()
 
-# Запуск бота
-init_config()
-client.run(DISCORD_TOKEN)
+#==========================COMMANDS_NEWS===========================
+
+#Команда приветсвия
+@bot.command(name='hello')
+async def hello(ctx):
+    await ctx.send(f'Hello {ctx.author.mention}!')
+
