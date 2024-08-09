@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="f82bb775-2606-46bc-81d7-5134369b6fa0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,7 +34,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -85,6 +86,7 @@
       <workItem from="1723058883729" duration="347000" />
       <workItem from="1723059835188" duration="806000" />
       <workItem from="1723116799919" duration="1176000" />
+      <workItem from="1723209937659" duration="1849000" />
     </task>
     <servers />
   </component>
