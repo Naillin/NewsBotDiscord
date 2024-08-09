@@ -1,6 +1,7 @@
 import random
 import weather_module
 import news_module
+import datetime
 
 import discord
 from discord.ext import tasks, commands
@@ -33,10 +34,20 @@ async def post_updates():
     channel = bot.get_channel(CHANNEL_ID)
     if channel:
         news_module.fetch_newsAPI(NEWS_API_KEY)
+        weather_unit = weather_module.get_weather(WEATHER_API_KEY, WEATHER_CITY)
 
-        #weather = weather_module.fetch_weather(WEATHER_API_KEY, WEATHER_CITY)
         await channel.send(f'Новости: {news_module.get_NewsUnit().title}')
-        #await channel.send(f'Погода: {weather}')
+        embed = discord.Embed(
+            title=f"Погода в городе {WEATHER_CITY}", color=0x00ff00,
+            timestamp=datetime.datetime.now(), )
+        embed.add_field(name="Описание", value=f"**{weather_unit.weather_description}**", inline=False)
+        embed.add_field(name="Температура(C)", value=f"**{weather_unit.temperature}°C**", inline=False)
+        embed.add_field(name="Влажность(%)", value=f"**{weather_unit.humidity}%**", inline=False)
+        embed.add_field(name="Атмосферное давление(hPa)", value=f"**{weather_unit.pressure}hPa**", inline=False)
+        embed.set_thumbnail(url="https://i.ibb.co/CMrsxdX/weather.png")
+        embed.set_footer(text=f"BlogDrone")
+
+        await channel.send(embed=embed)
 
 #==========================TASKS_NEWS===========================
 
