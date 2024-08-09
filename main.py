@@ -6,6 +6,7 @@ import discord
 from discord.ext import tasks, commands
 
 intents = discord.Intents.default()
+intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 # Начальная настройка бота и запуск конфига
@@ -31,11 +32,7 @@ def init_config():
 async def post_updates():
     channel = bot.get_channel(CHANNEL_ID)
     if channel:
-        news_module.fetch_technology_newsAPI(NEWS_API_KEY)
-        # if random.random() < 0.5:
-        #     news_module.fetch_war_newsAPI(NEWS_API_KEY)
-        # else:
-        #     news_module.fetch_gaming_newsAPI(NEWS_API_KEY)
+        news_module.fetch_newsAPI(NEWS_API_KEY)
 
         #weather = weather_module.fetch_weather(WEATHER_API_KEY, WEATHER_CITY)
         await channel.send(f'Новости: {news_module.get_NewsUnit().title}')
@@ -60,6 +57,17 @@ async def on_ready():
 @bot.command(name='hello')
 async def hello(ctx):
     await ctx.send(f'Hello {ctx.author.mention}!')
+
+#Команда отправки новости
+@bot.command(name='more')
+async def more(ctx):
+    await ctx.send(f'Конечно, {ctx.author.mention}! Вот еще новости:')
+    await post_updates()
+
+@bot.command(name='debug')
+async def debug(ctx):
+    await ctx.send(f'Конечно, {ctx.author.mention}! Вот еще новости:')
+    await post_updates()
 
 # Запуск бота
 init_config()
