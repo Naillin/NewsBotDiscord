@@ -43,12 +43,10 @@ def fetch_newsAPI(NEWS_API_KEY):
     global __articles_date
     __articles_date = {'articles': []}  # Инициализируем переменную articles_date
     while len(__articles_date['articles']) == 0:
-        d = random.choice(codewords)
-        s = random.choice(__categories)
         # /v2/top-headlines
         __articles_date = newsapi.get_top_headlines(
-            q=d,
-            category=s,
+            q=random.choice(codewords),
+            category=random.choice(__categories),
             language='ru',
             # country='ru'
         )
