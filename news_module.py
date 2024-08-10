@@ -4,7 +4,7 @@ import datetime
 from news_unit import NewsUnit
 from newsapi import NewsApiClient
 
-categories = [
+__categories = [
     'business',
     'entertainment',
     'general',
@@ -14,7 +14,7 @@ categories = [
     'technology'
 ]
 
-global articles_date
+__articles_date = {'articles': []}
 def fetch_newsAPI(NEWS_API_KEY):
     """
     Fetches news articles from the News API using the provided API key.
@@ -28,7 +28,7 @@ def fetch_newsAPI(NEWS_API_KEY):
     Notes:
         This function uses the NewsApiClient to fetch news articles.
         It first tries to fetch top headlines, and if that fails, it tries to fetch everything.
-        The fetched articles are stored in the global variable articles_date.
+        The fetched articles are stored in the variable articles_date.
     """
     # Открываем файл для чтения
     with open('codewords.txt', 'r', encoding='utf-8') as file:
@@ -40,20 +40,20 @@ def fetch_newsAPI(NEWS_API_KEY):
     # Init
     newsapi = NewsApiClient(api_key=NEWS_API_KEY)
 
-    global articles_date  # Объявляем articles_date как глобальную переменную
-    articles_date = {'articles': []}  # Инициализируем переменную articles_date
-    while not articles_date['articles']:
+    global __articles_date
+    __articles_date = {'articles': []}  # Инициализируем переменную articles_date
+    while len(__articles_date['articles']) == 0:
         d = random.choice(codewords)
-        s = random.choice(categories)
+        s = random.choice(__categories)
         # /v2/top-headlines
-        articles_date = newsapi.get_top_headlines(
+        __articles_date = newsapi.get_top_headlines(
             q=d,
             category=s,
             language='ru',
             # country='ru'
         )
 
-        if not articles_date['articles']:
+        if len(__articles_date['articles']) == 0:
             # Если новостей не найдено, ищем их с помощью get_everything
             now = datetime.datetime.now()
             past_7_days = now - datetime.timedelta(days=7)
@@ -65,7 +65,6 @@ def fetch_newsAPI(NEWS_API_KEY):
                 language='ru',
                 # country='ru'
             )
-            articles_date = everything
 
     # /v2/top-headlines/sources
     sources = newsapi.get_sources()
@@ -78,9 +77,9 @@ def get_NewsUnit():
     Returns:
         NewsUnit: A NewsUnit object containing information about a news article, or a string indicating that no news is available.
     """
-    global articles_date
-    articles = articles_date['articles']
-    if articles:
+    global __articles_date
+    articles = __articles_date['articles']
+    if len(articles) != 0:
         random_article = random.choice(articles)
         return NewsUnit(
             random_article['author'],
@@ -90,4 +89,4 @@ def get_NewsUnit():
             random_article['urlToImage']
         )
     else:
-        return 'Нет доступных новостей.'
+        return None

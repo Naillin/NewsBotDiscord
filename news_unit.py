@@ -1,8 +1,9 @@
+import string
 
 class NewsUnit:
-    def __init__(self, author, title, description, url, urlToImage):
+    def __init__(self, author: str, title: str, description: str, url: str, urlToImage: str):
         """
-        Initializes a NewsUnit object.
+        Initializes a NewsUnit object with the provided news article information.
 
         Args:
             author (str): The author of the news article.
