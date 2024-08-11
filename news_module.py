@@ -15,6 +15,8 @@ __categories = [
 ]
 
 __articles_date = {'articles': []}
+__number_of_requests = 0
+__number_of_all_requests = 0
 def fetch_news_with_top_headlines(NEWS_API_KEY):
     """
     Fetches news articles from the News API using the provided API key.
@@ -40,6 +42,8 @@ def fetch_news_with_top_headlines(NEWS_API_KEY):
     # Init
     newsapi = NewsApiClient(api_key=NEWS_API_KEY)
 
+    global __number_of_requests
+    __number_of_requests = 0
     global __articles_date
     __articles_date = {'articles': []}  # Инициализируем переменную articles_date
     while len(__articles_date['articles']) == 0:
@@ -50,6 +54,7 @@ def fetch_news_with_top_headlines(NEWS_API_KEY):
             language='ru',
             # country='ru'
         )
+        __number_of_requests = __number_of_requests + 1
 
         if len(__articles_date['articles']) == 0:
             # Если новостей не найдено, ищем их с помощью get_everything
@@ -63,9 +68,13 @@ def fetch_news_with_top_headlines(NEWS_API_KEY):
                 language='ru',
                 # country='ru'
             )
+            __number_of_requests = __number_of_requests + 1
 
     # /v2/top-headlines/sources
-    sources = newsapi.get_sources()
+    # sources = newsapi.get_sources()
+
+    global __number_of_all_requests
+    __number_of_all_requests = __number_of_all_requests + __number_of_requests
 
 def fetch_news_everything(NEWS_API_KEY):
     # Открываем файл для чтения
@@ -78,6 +87,8 @@ def fetch_news_everything(NEWS_API_KEY):
     # Init
     newsapi = NewsApiClient(api_key=NEWS_API_KEY)
 
+    global __number_of_requests
+    __number_of_requests = 0
     global __articles_date
     __articles_date = {'articles': []}  # Инициализируем переменную articles_date
     while len(__articles_date['articles']) == 0:
@@ -91,9 +102,12 @@ def fetch_news_everything(NEWS_API_KEY):
             language='ru',
             # country='ru'
         )
+        __number_of_requests = __number_of_requests + 1
 
     # /v2/top-headlines/sources
-    sources = newsapi.get_sources()
+    # sources = newsapi.get_sources()
+    global __number_of_all_requests
+    __number_of_all_requests = __number_of_all_requests + __number_of_requests
 
 def get_NewsUnit():
     """
@@ -115,3 +129,9 @@ def get_NewsUnit():
         )
     else:
         return None
+
+
+def get_number_of_requests():
+    global __number_of_requests
+    global __number_of_all_requests
+    return __number_of_requests, __number_of_all_requests

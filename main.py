@@ -60,6 +60,12 @@ async def post_updates():
             )
             embedNews.set_author(name=news_unit.author)
             embedNews.set_image(url=news_unit.urlToImage)
+            embedNews.add_field(
+                name="Статистика",
+                value=f"Количество запросов к API для текущей новости: {str(news_module.get_number_of_requests()[0])}.\n"
+                      f"Всего запросов к API: {str(news_module.get_number_of_requests()[1])}.",
+                inline=False
+            )
             await channel.send(embed=embedNews)
 
         # if weather_unit:
