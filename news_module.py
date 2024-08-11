@@ -15,7 +15,7 @@ __categories = [
 ]
 
 __articles_date = {'articles': []}
-def fetch_newsAPI(NEWS_API_KEY):
+def fetch_news_with_top_headlines(NEWS_API_KEY):
     """
     Fetches news articles from the News API using the provided API key.
 
@@ -57,7 +57,7 @@ def fetch_newsAPI(NEWS_API_KEY):
             past_7_days = now - datetime.timedelta(days=7)
             # /v2/everything
             everything = newsapi.get_everything(
-                q=d,
+                q=random.choice(codewords),
                 from_param=past_7_days.strftime('%Y-%m-%d'),
                 to=now.strftime('%Y-%m-%d'),
                 language='ru',
@@ -67,6 +67,33 @@ def fetch_newsAPI(NEWS_API_KEY):
     # /v2/top-headlines/sources
     sources = newsapi.get_sources()
 
+def fetch_news_everything(NEWS_API_KEY):
+    # Открываем файл для чтения
+    with open('codewords.txt', 'r', encoding='utf-8') as file:
+        codewords = []
+        for line in file:
+            if line:  # Проверяем, что строка не пустая
+                codewords.append(line.strip())  # Сохраняем в список, убирая лишние пробелы
+
+    # Init
+    newsapi = NewsApiClient(api_key=NEWS_API_KEY)
+
+    global __articles_date
+    __articles_date = {'articles': []}  # Инициализируем переменную articles_date
+    while len(__articles_date['articles']) == 0:
+        now = datetime.datetime.now()
+        past_7_days = now - datetime.timedelta(days=7)
+        # /v2/everything
+        everything = newsapi.get_everything(
+            q=random.choice(codewords),
+            from_param=past_7_days.strftime('%Y-%m-%d'),
+            to=now.strftime('%Y-%m-%d'),
+            language='ru',
+            # country='ru'
+        )
+
+    # /v2/top-headlines/sources
+    sources = newsapi.get_sources()
 
 def get_NewsUnit():
     """

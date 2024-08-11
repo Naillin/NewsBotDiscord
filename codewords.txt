@@ -1,6 +1,15 @@
+programming
+programmers
+science
+research
 computer games
 video games
 gaming
+game
+gaming reviews
+game reviews
+gaming reviews
+game walkthroughs
 esports
 gaming industry
 game development
@@ -11,6 +20,7 @@ gaming technology
 gaming news
 war military
 conflict
+war
 politics
 international relations
 global news
@@ -29,10 +39,6 @@ news reports
 news analysis
 news commentary
 news opinions
-gaming reviews
-game reviews
-gaming reviews
-game walkthroughs
 walkthroughs
 Компьютерные игры
 Видеоигры
@@ -40,12 +46,19 @@ walkthroughs
 Игровое программное обеспечение
 Игровые консоли
 ПК-игры
+Игры
+Игра
 Онлайн-игры
 Мультиплеер
 Игровые жанры
 Игровые платформы
 Россия
 Войны
+Война
+Оружие
+Ракеты
+Бомбы
+Взрыв
 Конфликты
 Военные действия
 Военная техника
@@ -54,3 +67,7 @@ walkthroughs
 Терроризм
 Кибервойны
 Информационные войны
+Программирование
+Программисты
+Наука
+Исследование

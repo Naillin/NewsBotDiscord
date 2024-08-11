@@ -47,7 +47,7 @@ def init_config():
 async def post_updates():
     channel = bot.get_channel(CHANNEL_ID)
     if channel:
-        news_module.fetch_newsAPI(NEWS_API_KEY)
+        news_module.fetch_news_everything(NEWS_API_KEY) # добавить еще один api ключ от карпа как резерв. если израсходуется лимит первого начнет работать второй.
         # weather_unit = weather_module.get_weather(WEATHER_API_KEY, WEATHER_CITY)
 
         news_unit = news_module.get_NewsUnit()
