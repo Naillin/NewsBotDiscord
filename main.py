@@ -47,8 +47,8 @@ def init_config():
 async def post_updates():
     channel = bot.get_channel(CHANNEL_ID)
     if channel:
-        news_module.fetch_newsAPI(NEWS_API_KEY)
-        weather_unit = weather_module.get_weather(WEATHER_API_KEY, WEATHER_CITY)
+        news_module.fetch_news_everything(NEWS_API_KEY) # добавить еще один api ключ от карпа как резерв. если израсходуется лимит первого начнет работать второй.
+        # weather_unit = weather_module.get_weather(WEATHER_API_KEY, WEATHER_CITY)
 
         news_unit = news_module.get_NewsUnit()
         if news_unit:
@@ -60,30 +60,35 @@ async def post_updates():
             )
             embedNews.set_author(name=news_unit.author)
             embedNews.set_image(url=news_unit.urlToImage)
+            embedNews.add_field(
+                name="Статистика",
+                value=f"Количество запросов к API для текущей новости: {str(news_module.get_number_of_requests()[0])}.\n"
+                      f"Всего запросов к API: {str(news_module.get_number_of_requests()[1])}.",
+                inline=False
+            )
             await channel.send(embed=embedNews)
 
-        if weather_unit:
-            embed = discord.Embed(
-                title=f"Погода в городе {WEATHER_CITY}",
-                color=0x00ff00,
-                timestamp=datetime.datetime.now()
-            )
-            embed.add_field(name="Описание", value=f"**{weather_unit.weather_description}**", inline=False)
-            embed.add_field(name="Температура(C)", value=f"**{weather_unit.temperature}°C**", inline=False)
-            embed.add_field(name="Влажность(%)", value=f"**{weather_unit.humidity}%**", inline=False)
-            embed.add_field(name="Атмосферное давление(hPa)", value=f"**{weather_unit.pressure}hPa**", inline=False)
-            embed.set_thumbnail(url="https://i.ibb.co/CMrsxdX/weather.png")
-            embed.set_footer(text=f"BlogDrone")
-            await channel.send(embed=embed)
+        # if weather_unit:
+            # embed = discord.Embed(
+            #     title=f"Погода в городе {WEATHER_CITY}",
+            #     color=0x00ff00,
+            #     timestamp=datetime.datetime.now()
+            # )
+            # embed.add_field(name="Описание", value=f"**{weather_unit.weather_description}**", inline=False)
+            # embed.add_field(name="Температура(C)", value=f"**{weather_unit.temperature}°C**", inline=False)
+            # embed.add_field(name="Влажность(%)", value=f"**{weather_unit.humidity}%**", inline=False)
+            # embed.add_field(name="Атмосферное давление(hPa)", value=f"**{weather_unit.pressure}hPa**", inline=False)
+            # embed.set_thumbnail(url="https://i.ibb.co/CMrsxdX/weather.png")
+            # embed.set_footer(text=f"BlogDrone")
+            # await channel.send(embed=embed)
 
 #==========================TASKS===========================
 
 # Задача на отправку новостей и погоды (раз в час)
 @tasks.loop(hours=1)
 async def scheduled_task():
-    await post_updates()
     try:
-        a=1
+        await post_updates()
     except Exception as e:
         # Создаем embed-сообщение с ошибкой
         embed = discord.Embed(title="Ошибка", color=discord.Color.from_rgb(255, 0, 0))
@@ -91,7 +96,6 @@ async def scheduled_task():
         # Отправляем embed-сообщение в канал
         channel = bot.get_channel(CHANNEL_ID)
         await channel.send(embed=embed)
-
     finally:
         global __last_message
         __last_message = None
