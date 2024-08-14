@@ -8,17 +8,16 @@ def get_weather(WEATHER_API_KEY, WEATHER_CITY: str):
     data = response.json()
 
     y=data["main"]
-    current_temperature = y["Температура"]
-    current_temperature_celsiuis = str(round(current_temperature - 273.15))
-    current_pressure = y["Давление"]
-    current_humidity = y["Влажность"]
-    z=data["Погода"]
+    current_temperature = y["temp"]
+    current_pressure = y["pressure"]
+    current_humidity = y["humidity"]
+    z=data["weather"]
 
-    weather_description = z[0]["Описание"]
+    weather_description = z[0]["description"]
 
     return WeatherUnit(
         weather_description,
-        current_temperature_celsiuis,
+        current_temperature,
         current_humidity,
         current_pressure
     )
