@@ -68,6 +68,7 @@ def fetch_news_with_top_headlines(NEWS_API_KEY):
                 language='ru',
                 # country='ru'
             )
+            __articles_date = everything
             __number_of_requests = __number_of_requests + 1
 
     # /v2/top-headlines/sources
@@ -116,6 +117,7 @@ def fetch_news_everything(NEWS_API_KEY):
             language='ru',
             # country='ru'
         )
+        __articles_date = everything
         __number_of_requests = __number_of_requests + 1
 
     # /v2/top-headlines/sources
