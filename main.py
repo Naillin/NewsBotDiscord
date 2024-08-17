@@ -44,62 +44,75 @@ def init_config():
     WEATHER_CITY = config['WEATHER_CITY']
 
 # Отправка новостей
-async def post_updates():
-    channel = bot.get_channel(CHANNEL_ID)
-    if channel:
-        news_module.fetch_news_everything(NEWS_API_KEY) # добавить еще один api ключ от карпа как резерв. если израсходуется лимит первого начнет работать второй.
-        weather_unit = weather_module.get_weather(WEATHER_API_KEY, WEATHER_CITY)
+async def post_news():
+    try:
+        channel = bot.get_channel(CHANNEL_ID)
+        if channel:
+            news_module.fetch_news_everything(NEWS_API_KEY) # добавить еще один api ключ от карпа как резерв. если израсходуется лимит первого начнет работать второй.
 
-        news_unit = news_module.get_NewsUnit()
-        if news_unit:
-            embedNews = discord.Embed(
-                title=news_unit.title,
-                description=news_unit.description,
-                url=news_unit.url,
-                color=discord.Color.from_rgb(0, 255, 0)  # цвет embed
-            )
-            embedNews.set_author(name=news_unit.author)
-            embedNews.set_image(url=news_unit.urlToImage)
-            embedNews.add_field(
-                name="Статистика",
-                value=f"Количество запросов к API для текущей новости: {str(news_module.get_number_of_requests()[0])}.\n"
-                      f"Всего запросов к API: {str(news_module.get_number_of_requests()[1])}.",
-                inline=False
-            )
-            await channel.send(embed=embedNews)
+            news_unit = news_module.get_NewsUnit()
+            if news_unit:
+                embedNews = discord.Embed(
+                    title=news_unit.title,
+                    description=news_unit.description,
+                    url=news_unit.url,
+                    color=discord.Color.from_rgb(0, 255, 0)  # цвет embed
+                )
+                embedNews.set_author(name=news_unit.author)
+                embedNews.set_image(url=news_unit.urlToImage)
+                embedNews.add_field(
+                    name="Статистика",
+                    value=f"Количество запросов к API для текущей новости: {str(news_module.get_number_of_requests()[0])}.\n"
+                          f"Всего запросов к API: {str(news_module.get_number_of_requests()[1])}.",
+                    inline=False
+                )
+                await channel.send(embed=embedNews)
+    except Exception as e:
+        # Создаем embed-сообщение с ошибкой
+        embedError = discord.Embed(title="Ошибка", color=discord.Color.from_rgb(255, 0, 0))
+        embedError.add_field(name="Ошибка", value=str(e), inline=False)
+        # Отправляем embed-сообщение в канал
+        channel = bot.get_channel(CHANNEL_ID)
+        await channel.send(embed=embedError)
 
-        if weather_unit:
-            embed = discord.Embed(
-                title=f"Погода в городе {WEATHER_CITY}",
-                color=discord.Color.from_rgb(0, 0, 255),
-                timestamp=datetime.datetime.now()
-            )
-            embed.add_field(name="Описание", value=f"**{weather_unit.weather_description}**", inline=False)
-            embed.add_field(name="Температура(C)", value=f"**{weather_unit.temperature}°C**", inline=False)
-            embed.add_field(name="Влажность(%)", value=f"**{weather_unit.humidity}%**", inline=False)
-            embed.add_field(name="Атмосферное давление(hPa)", value=f"**{weather_unit.pressure}hPa**", inline=False)
-            embed.set_thumbnail(url="https://i.ibb.co/CMrsxdX/weather.png")
-            embed.set_footer(text=f"BlogDrone")
-            await channel.send(embed=embed)
+async def post_weather():
+    try:
+        channel = bot.get_channel(CHANNEL_ID)
+        if channel:
+            weather_unit = weather_module.get_weather(WEATHER_API_KEY, WEATHER_CITY)
 
+            if weather_unit:
+                embedWeather = discord.Embed(
+                    title=f"Погода в городе {WEATHER_CITY}",
+                    color=discord.Color.from_rgb(0, 0, 255),
+                    timestamp=datetime.datetime.now()
+                )
+                embedWeather.add_field(name="Описание", value=f"**{weather_unit.weather_description}**", inline=False)
+                embedWeather.add_field(name="Температура(C)", value=f"**{weather_unit.temperature}°C**", inline=False)
+                embedWeather.add_field(name="Влажность(%)", value=f"**{weather_unit.humidity}%**", inline=False)
+                embedWeather.add_field(name="Атмосферное давление(hPa)", value=f"**{weather_unit.pressure}hPa**", inline=False)
+                embedWeather.set_thumbnail(url="https://i.ibb.co/CMrsxdX/weather.png")
+                embedWeather.set_footer(text=f"BlogDrone")
+                await channel.send(embed=embedWeather)
+    except Exception as e:
+        # Создаем embed-сообщение с ошибкой
+        embedError = discord.Embed(title="Ошибка", color=discord.Color.from_rgb(255, 0, 0))
+        embedError.add_field(name="Ошибка", value=str(e), inline=False)
+        # Отправляем embed-сообщение в канал
+        channel = bot.get_channel(CHANNEL_ID)
+        await channel.send(embed=embedError)
+            
 #==========================TASKS===========================
 
 # Задача на отправку новостей и погоды (раз в час)
 @tasks.loop(hours=1)
 async def scheduled_task():
-    try:
-        await post_updates()
-    except Exception as e:
-        # Создаем embed-сообщение с ошибкой
-        embed = discord.Embed(title="Ошибка", color=discord.Color.from_rgb(255, 0, 0))
-        embed.add_field(name="Ошибка", value=str(e), inline=False)
-        # Отправляем embed-сообщение в канал
-        channel = bot.get_channel(CHANNEL_ID)
-        await channel.send(embed=embed)
-    finally:
-        global __last_message
-        __last_message = None
-        loading_animation.restart()
+    await post_news()
+    await post_weather()
+
+    global __last_message
+    __last_message = None
+    loading_animation.restart()
 
 __last_message = None
 @tasks.loop(seconds=0.3)
@@ -133,20 +146,13 @@ async def hello(ctx):
 #Команда отправки новости
 @bot.command(name='more')
 async def more(ctx):
-    try:
-        await ctx.send(f'Конечно, {ctx.author.mention}! Вот еще новости:')
-        await post_updates()
-    except Exception as e:
-        # Создаем embed-сообщение с ошибкой
-        embed = discord.Embed(title="Ошибка", color=discord.Color.from_rgb(255, 0, 0))
-        embed.add_field(name="Ошибка", value=str(e), inline=False)
-        # Отправляем embed-сообщение в канал
-        channel = bot.get_channel(CHANNEL_ID)
-        await channel.send(embed=embed)
-    finally:
-        global __last_message
-        __last_message = None
-        loading_animation.restart()
+    await ctx.send(f'Конечно, {ctx.author.mention}! Вот еще новости:')
+    await post_news()
+    await post_weather()
+
+    global __last_message
+    __last_message = None
+    loading_animation.restart()
 
 @bot.command(name='debug')
 async def debug(ctx):
