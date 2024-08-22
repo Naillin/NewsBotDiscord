@@ -104,15 +104,19 @@ async def post_weather():
             
 #==========================TASKS===========================
 
-# Задача на отправку новостей и погоды (раз в час)
-@tasks.loop(hours=1)
+# Задача на отправку новостей (раз в 2 часа)
+@tasks.loop(hours=2)
 async def scheduled_task():
     await post_news()
-    await post_weather()
 
     global __last_message
     __last_message = None
     loading_animation.restart()
+
+# Задача на отправку погоды (раз в 8 часов)
+@tasks.loop(hours=8)
+async def post_weather_task():
+    await post_weather()
 
 __last_message = None
 @tasks.loop(seconds=0.3)
@@ -130,6 +134,7 @@ async def loading_animation():
 async def on_ready():
     print(f'Logged in as {bot.user}')
     scheduled_task.start()
+    post_weather_task.start()
     loading_animation.start()
 
 #==========================COMMANDS===========================
