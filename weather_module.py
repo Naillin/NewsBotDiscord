@@ -9,11 +9,11 @@ def get_weather(WEATHER_API_KEY, WEATHER_CITY: str):
     url = f'https://api.openweathermap.org/data/2.5/weather?q={WEATHER_CITY}&appid={WEATHER_API_KEY}&units=metric'
 
     #  адаптер для HTTP-запросов, который позволяет повторять запросы в случае неудачи(5 раз).
-    WeatherAdapter = HTTPAdapter(max_retries=5)
+    WeatherAdapter = HTTPAdapter(max_retries=20)
     session = requests.Session()
     session.mount('https://api.openweathermap.org', WeatherAdapter)
 
-    response = requests.get(url)
+    response = session.get(url)  # Используйте сессию для отправки запроса
     data = response.json()
 
 

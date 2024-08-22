@@ -118,6 +118,10 @@ async def scheduled_task():
 async def post_weather_task():
     await post_weather()
 
+    global __last_message
+    __last_message = None
+    loading_animation.restart()
+
 __last_message = None
 @tasks.loop(seconds=0.3)
 async def loading_animation():
